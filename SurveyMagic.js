@@ -25,25 +25,6 @@ const SurveyMagic = ({ url }) => {
    const runOnce = useRef(false);
    const [css] = useStyletron();
 
-   const testResetUserFlowData = () => {
-      updateUserData({ surveyComplete: false, currentFlow: 'assets' });
-   }
-
-   const testFlowTransition = () => {
-      updateUserData({
-         surveyComplete: false,
-         currentQuestionKey: 'questions.5',
-         history: [
-            'questions.0',
-            'questions.1',
-            'questions.2',
-            'questions.3',
-            'questions.4',
-         ],
-         currentFlow: 'expenses',
-      })
-   }
-
    const updateAnswersHandler = (user, name, value) => {
       if (name === 'married' && value === true) {
          setUserIsMarried(true);
@@ -98,18 +79,9 @@ const SurveyMagic = ({ url }) => {
       });
    }
 
-   const clearResumeData = () => {
-      setUserHistory(undefined);
-      setUserAnswers(undefined);
-      setResumeFlowQuestionKey(undefined);
-   }
 
    useEffect(() => {
       if (!runOnce.current) {
-         if (userAPI.mainUser) {
-            testResetUserFlowData(); //two helper methods here to either reset the user data or bring the ssurvey to a certain point to test ( you must comment them in and refresh browser)
-            // testFlowTransition();
-         }
          let flow;
          if (userData.user.flowProgressionData) {
             const { resumeFlowQuestionKey, userAnswers, userHistory, currentFlow } = userData.user.flowProgressionData;
@@ -164,7 +136,6 @@ const SurveyMagic = ({ url }) => {
       answers,
       userIsMarried,
       updateAnswersHandler,
-      clearResumeData,
       updateUserData,
    }
 

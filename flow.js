@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { dobValidity, futureDateValidity } from './dateValidity';
+
 import Question from './Question/Question';
 import Arrow from './Arrow';
 import { ProgressBar } from 'baseui/progress-bar';
 import { Card } from 'baseui/card';
+
+import { dobValidity, futureDateValidity } from './dateValidity';
 
 const Flow = ({
    flowData,
    userHistory,
    answers,
    resumeFlowQuestionKey,
-   userIsMarried,
    updateAnswersHandler,
    finishFlowHandler,
    updateUserData,
@@ -25,14 +26,16 @@ const Flow = ({
    const [nextArrowMessage, setNextArrowMessage] = useState('Next Question');
 
    const updateInput = target => {
-      let isMarried = userIsMarried;
       let { name, value } = target;
-      if (value === 'true') value = true;
-      if (value === 'false') value = false
-      if (name === 'married') isMarried = value;
-      if(!isNaN(+value) && typeof value !== 'boolean') value = +value;
+      value = convertValue(value);
       updateAnswersHandler(currentQuestion.user, name, value);
-      updateUI(currentQuestionKey, questionKeys, value, currentQuestion, flowData, isMarried);
+      updateUI(currentQuestionKey, questionKeys, value, currentQuestion, flowData);
+   }
+
+   const convertValue = value => {
+      if (value === 'true') return true;
+      if (value === 'false') return false
+      if(!isNaN(+value) && typeof value !== 'boolean') return +value;
    }
 
    const generateQuestionKeys = flowData => {
@@ -91,8 +94,8 @@ const Flow = ({
       ).slice(-1)[0];
 
       if (question.fieldType === 'boolean') {
-         if (answer === true && question.hasOwnProperty('yesQuestions')) return `${questionKey}.yesQuestions.0`;
-         if (answer === false && question.hasOwnProperty('noQuestions')) return `${questionKey}.noQuestions.0`;
+         if (answer === true && question.yesQuestions) return `${questionKey}.yesQuestions.0`;
+         if (answer === false && question.noQuestions) return `${questionKey}.noQuestions.0`;
       }
       if (isMarried && (lastUserQuestionKey === questionKey || lastBaseQuestionKey === questionKey)) {
          return `spouseQuestions.0`;
@@ -135,12 +138,12 @@ const Flow = ({
       if (currentQuestionKey === lastSpouseQuestionKey) return true;
       if (!isMarried && currentQuestionKey === lastUserQuestionKey) return true;
       if (currentQuestionKey === lastBaseQuestionKey && !isMarried) {
-         if (!currentQuestion.hasOwnProperty('yesQuestions') && answer === true) return true;
-         if (!currentQuestion.hasOwnProperty('noQuestions') && answer === false) return true;
+         if (!currentQuestion.yesQuestions && answer === true) return true;
+         if (!currentQuestion.noQuestions && answer === false) return true;
       }
       if (currentQuestionKey === lastBaseSpouseQuestionKey) {
-         if (!currentQuestion.hasOwnProperty('yesQuestions') && answer === true) return true;
-         if (!currentQuestion.hasOwnProperty('noQuestions') && answer === false) return true;
+         if (!currentQuestion.yesQuestions && answer === true) return true;
+         if (!currentQuestion.noQuestions && answer === false) return true;
       }
       return false;
    }
@@ -240,7 +243,7 @@ const Flow = ({
          </Card>
       );
    } else {
-      return null;
+      return <></>;
    }
 }
 
@@ -249,7 +252,6 @@ Flow.propTypes = {
    userHistory: PropTypes.array,
    resumeFlowQuestionKey: PropTypes.string,
    answers: PropTypes.object.isRequired,
-   userIsMarried: PropTypes.bool,
    updateAnswersHandler: PropTypes.func.isRequired,
    updateUserData: PropTypes.func.isRequired,
 }
