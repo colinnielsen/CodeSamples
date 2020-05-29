@@ -1,2 +1,6 @@
 hidden/
 .DS_Store
+node_modules/
+.eslintrc.js
+package.json
+package-lock.json

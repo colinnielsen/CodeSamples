@@ -6,7 +6,7 @@ import Flow from '../Flow/Flow';
 import { Spinner } from 'baseui/spinner';
 import { Redirect } from 'react-router-dom';
 
-const SurveyMagic = ({ url }) => {
+const SurveyMagic = () => {
    const { userAPI, userData, loading } = React.useContext(FirebaseUserContext);
    const flows = ['user', 'socialSecurity', 'assets', 'expenses'];
    const [currentFlow, setCurrentFlow] = useState();
