@@ -4,4 +4,4 @@ node_modules/
 .eslintrc.js
 package.json
 package-lock.json
-code_samples/
+code-samples/
